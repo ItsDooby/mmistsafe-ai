@@ -1,0 +1,6 @@
+streamlit>=1.35.0
+paho-mqtt>=2.0.0
+requests>=2.31.0
+pillow>=10.2.0
+pandas>=2.2.0
+pytest>=8.0.0

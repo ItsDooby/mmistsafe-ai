@@ -1,0 +1,6 @@
+{
+  "name": "MistSafe AI",
+  "description": "MistSafe AI: Live Water Monitoring & Interlock platform for ESP32-based water misting prototype, telemetry ingestion, microscopy inspection, and safety shutdown.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
