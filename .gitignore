@@ -1,4 +1,5 @@
 node_modules/
+.tools/
 .pnpm-store/
 .venv/
 __pycache__/

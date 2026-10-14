@@ -2,6 +2,14 @@
 
 Integration prototype for an ESP32 water-misting project. Physical safety logic belongs on the device. A platform command or reported output state does not prove physical shutdown or water safety. No real model or hardware operation has been validated here.
 
+## Project purpose and current stage
+
+MistSafe AI supports an ESP32-based water-misting prototype with live sensor monitoring, stored reading histories, microscopy sample records, experimental local AI interfaces, and shutdown-request tracking. It distinguishes platform requests, device acknowledgements, reported equipment states, and stale or missing readings.
+
+**Current stage: software integration prototype with a completed initial UI redesign and simulator-based verification.** The React dashboard includes a calibrated ultrasonic water-level cylinder, a restrained light monitoring interface, sample upload/retrieval, trends, activity, and developer tools. The Python test suite has 38 passing tests, supplemented by focused browser checks of simulator controls, faults, stale readings, reference-image persistence, and desktop/mobile layouts.
+
+Physical ESP32/ultrasonic operation, end-to-end MQTT delivery, actuator feedback, and real AI models remain unverified. No model has been supplied or validated. Next work includes hardware/broker integration, a broader command/reset audit, complete selected-range export beyond the current loaded-record limit, and additional storage/error-case checks. This repository documents an experimental engineering platform, not a validated water-safety system or production release.
+
 ## Current architecture
 
 The main interface is React/TypeScript (`src/App.tsx`), served by Express (`server.ts`) with Vite in development. Express invokes `mistsafe/bridge.py` using argument arrays, without shell interpolation. The Python modules validate telemetry and persist shared state/history in SQLite WAL. `app.py` is a separate older Streamlit interface; it is not the React application's entry point.
