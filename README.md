@@ -1,54 +1,51 @@
 # MistSafe AI
 
-Integration prototype for an ESP32 water-misting project. Physical safety logic belongs on the device. A platform command or reported output state does not prove physical shutdown or water safety. No real model or hardware operation has been validated here.
+A bilingual English/Arabic demonstration platform for exploring supplied water-quality sample records and research references. The current edition is fully simulated and runs entirely in the browser.
 
-## Project purpose and current stage
+## Current scope
 
-MistSafe AI supports an ESP32-based water-misting prototype with live sensor monitoring, stored reading histories, microscopy sample records, experimental local AI interfaces, and shutdown-request tracking. It distinguishes platform requests, device acknowledgements, reported equipment states, and stale or missing readings.
+- Forest-green sidebar, warm neutral surfaces, responsive layouts and full Arabic RTL navigation.
+- Overview of a selected source sample with seven measurements and the workbook's illustrative risk formula.
+- Searchable, filterable, paginated sample explorer with record details and CSV export.
+- Developer tools select recorded scenarios; no new readings are manufactured.
+- Evidence library includes the three supplied workbooks and their research/image reference links.
+- No live devices, model training, image recognition, backend service or Python runtime is required.
 
-**Current stage: software integration prototype with a completed initial UI redesign and simulator-based verification.** The React dashboard includes a calibrated ultrasonic water-level cylinder, a restrained light monitoring interface, sample upload/retrieval, trends, activity, and developer tools. The Python test suite has 38 passing tests, supplemented by focused browser checks of simulator controls, faults, stale readings, reference-image persistence, and desktop/mobile layouts.
+The 80-record operational workbook drives the interface. The earlier 400-record workbook is a separate downloadable source. The research register contains seven image references, two dataset references and an empty paired-data template. Reference images are not substituted for missing sample images. Simulated laboratory labels are not presented as verified results.
 
-Physical ESP32/ultrasonic operation, end-to-end MQTT delivery, actuator feedback, and real AI models remain unverified. No model has been supplied or validated. Next work includes hardware/broker integration, a broader command/reset audit, complete selected-range export beyond the current loaded-record limit, and additional storage/error-case checks. This repository documents an experimental engineering platform, not a validated water-safety system or production release.
+## Run locally
 
-## Current architecture
-
-The main interface is React/TypeScript (`src/App.tsx`), served by Express (`server.ts`) with Vite in development. Express invokes `mistsafe/bridge.py` using argument arrays, without shell interpolation. The Python modules validate telemetry and persist shared state/history in SQLite WAL. `app.py` is a separate older Streamlit interface; it is not the React application's entry point.
-
-The web server emits simulator telemetry every five seconds into the existing Python validation/storage path. This direct-database simulator does not demonstrate MQTT delivery. `mqtt_worker.py` is a separate optional worker for broker/device integration. Run one web-server instance to avoid duplicate simulator timers.
-
-## Local startup
-
-Use Node 22.12+ and Python 3.10+. From the project folder:
+Install Node 22.12+ (Node 24 is used for deployment), then:
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 npm install
 npm run dev
 ```
 
-The server automatically uses `.venv/Scripts/python.exe` on Windows or `.venv/bin/python` elsewhere. Set `PYTHON_EXECUTABLE` to an alternative interpreter if needed. Dependencies are checked at startup; missing packages fail visibly rather than triggering automatic global installation.
+Open the URL printed in the terminal. On the existing Windows laptop, double-click **Start MistSafe AI.cmd**. This launcher uses an installed Node or the existing bundled Node and opens the browser automatically. Keep its terminal open while using the app. If 3000 is occupied, Vite selects the next free port.
 
-Open http://127.0.0.1:3000. Copy `.env.example` to `.env` for optional configuration. `DATABASE_PATH` defaults to `mistsafe.db`; use a separate file for testing. No AI service is needed for monitoring. The primary device remains unavailable until telemetry arrives.
+## Build and publish
 
 ```powershell
 npm run lint
 npm run build
-.\.venv\Scripts\python.exe -m pytest tests -q
+npm run preview
 ```
 
-For MQTT integration, separately run `.venv/Scripts/python.exe mqtt_worker.py` after configuring your broker. MQTT/hardware operation requires separate verification. Browser test reset submissions are restricted to simulator devices; real reset events must use the worker's device event path.
+The static `dist` folder is the complete presentation website. `.github/workflows/pages.yml` installs from the pnpm lockfile, checks TypeScript, builds and deploys to GitHub Pages on pushes to main. Enable GitHub Actions as the Pages publishing source. Relative asset URLs and hash navigation support the repository path and direct tab links.
 
-## Water-level cylinder
+Public URL: https://itsdooby.github.io/mmistsafe-ai/
 
-The reusable SVG cylinder is read-only. It displays `water_distance_cm` using per-device calibration:
+## Data and evidence
 
-`fill_percent = 100 * (empty_distance_cm - water_distance_cm) / (empty_distance_cm - full_distance_cm)`
+`src/presentation-data.json` contains extracted values, source filenames and SHA-256 hashes. Original workbooks are copied unchanged into `public/files`. `scripts/prepare-presentation-data.py` regenerates the data from the supplied files using Python's standard library; Python is needed only to regenerate source assets, not to run the platform.
 
-This is usable fill height, not litres or arbitrary tank-volume percentage. Overview's expandable device settings save calibration. Real devices receive no calibration defaults. Empty distance must exceed full distance; distances must be finite and nonnegative.
+Fonts are bundled with their open licences in `public/fonts`, so the interface has no runtime dependency on a font CDN. Research links open external sources only when a visitor selects them.
 
-Simulated level controls are under Developer tools; Overview keeps calibration in expandable Device settings. The simulator seeds 40 cm empty / 10 cm full only on first creation. Existing saved calibration is preserved; use **Use test calibration** in the simulator level tools to select the requested test endpoints. The 0/25/50/75/100% selections produce 40/32.5/25/17.5/10 cm. Selection persists until changed and enters on the next periodic update. Missing/fault modes publish unavailable readings. Pausing telemetry preserves the last reading and becomes stale after 15 seconds. The drawing clamps out-of-range fills while preserving the raw distance and warning. Reduced-motion preferences disable the visual transition.
+See `PRESENTATION_STATUS.md` for the current implementation and verification scope. `verify-presentation.cjs` exercises the main browser workflows on the development preview; its Edge/Playwright paths are specific to the development laptop.
 
-## Verification limits and remaining work
+## Earlier prototype
 
-See `UI_REVIEW.md` for the light interface layout and browser checks, and `DEVELOPMENT_STATUS.md` for remaining work. Automated tests verify software behavior only; they do not verify physical equipment, treatment effectiveness, model accuracy, or complete MQTT integration. The UI verification checklist describes intended checks, not individual test-pass evidence.
+The earlier Express/Python/SQLite implementation remains in the repository for historical reference and is not included in the browser entry point. Its optional command is `npm run legacy:dev`. `DEVELOPMENT_STATUS.md` and `UI_REVIEW.md` describe that earlier hardware-oriented prototype, not this presentation edition.
+
+No physical valve response, biological accuracy, or water-safety performance has been validated by this presentation.
