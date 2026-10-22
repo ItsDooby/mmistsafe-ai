@@ -1,30 +1,44 @@
 # MistSafe AI
 
-A bilingual English/Arabic demonstration platform for exploring supplied water-quality sample records and research references. The current edition is fully simulated and runs entirely in the browser.
+Bilingual water-quality analysis and sample review, hosted as a static site on GitHub Pages.
 
-## Current scope
+Public site: https://itsdooby.github.io/mmistsafe-ai/
 
-- Forest-green sidebar, warm neutral surfaces, responsive layouts and full Arabic RTL navigation.
-- Overview of a selected source sample with seven measurements and the workbook's illustrative risk formula.
-- Searchable, filterable, paginated sample explorer with record details and CSV export.
-- Developer tools select recorded scenarios; no new readings are manufactured.
-- Evidence library includes the three supplied workbooks and their research/image reference links.
-- No live devices, model training, image recognition, backend service or Python runtime is required.
+## Interface
 
-The 80-record operational workbook drives the interface. The earlier 400-record workbook is a separate downloadable source. The research register contains seven image references, two dataset references and an empty paired-data template. Reference images are not substituted for missing sample images. Simulated laboratory labels are not presented as verified results.
+Overview, Samples, Sensor AI, Microscopy AI, Alerts, Performance and Configuration. English and Arabic include RTL layouts. The navy sidebar collapses and carries an animated SVG logo with a reduced-motion alternative. Settings and review events persist in the visitor's browser.
 
-## Run locally
+The active frontend is `src/product`, entered through `src/main.tsx`. Earlier interfaces are retained under `legacy/ui` and are not built or routed. No backend calls or physical integration are used by the site.
 
-Install Node 22.12+ (Node 24 is used for deployment), then:
+## Data and model boundaries
+
+Only the supplied files are inputs. The 80-record operational collection drives sample review. A deterministic L2 logistic regression trains on the 280 training rows in the earlier 400-record collection. Sixty existing test rows are held out from fitting and normalization; 60 validation rows are unused. The labels are research-generated, not independently verified laboratory outcomes. Metrics therefore measure reference-label agreement, not biological detection accuracy or field performance.
+
+There are no matched image files or image-quality labels. Microscopy correctly reports inconclusive, probabilities are unavailable, and no image classifier is trained. Missing image evidence is never treated as a zero score. Combined results currently use sensor evidence only. The existing research image links are not substituted as paired sample images.
+
+Safety-stop flags are evaluated independently from the model. Alert closure requires a logged verification note for stop conditions, and does not clear the source condition or authorize restarting. Review records are local browser records, not a central audit service.
+
+## Rebuild analysis
+
+Python 3.10+ standard library only:
+
+```powershell
+python scripts/build_data.py
+python scripts/check_analysis.py
+```
+
+The script reads the supplied Excel files in `public/files`, writes static analysis JSON in `public/analysis`, and computes evaluation metrics from held-out predictions. `provenance.json` records input hashes. No image outputs are created when no matched image files exist.
+
+## Run and build
+
+Use Node 22.12+ (CI uses Node 24):
 
 ```powershell
 npm install
 npm run dev
 ```
 
-Open the URL printed in the terminal. On the existing Windows laptop, double-click **Start MistSafe AI.cmd**. This launcher uses an installed Node or the existing bundled Node and opens the browser automatically. Keep its terminal open while using the app. If 3000 is occupied, Vite selects the next free port.
-
-## Build and publish
+Open the printed URL ending in `/mmistsafe-ai/`. On the development laptop, double-click **Start MistSafe AI.cmd**. It uses the available Node executable and launches the site automatically.
 
 ```powershell
 npm run lint
@@ -32,20 +46,12 @@ npm run build
 npm run preview
 ```
 
-The static `dist` folder is the complete presentation website. `.github/workflows/pages.yml` installs from the pnpm lockfile, checks TypeScript, builds and deploys to GitHub Pages on pushes to main. Enable GitHub Actions as the Pages publishing source. Relative asset URLs and hash navigation support the repository path and direct tab links.
+Hash navigation and the `/mmistsafe-ai/` build base support GitHub Pages. The workflow rebuilds and verifies model outputs, checks TypeScript, builds the static bundle, and deploys on pushes to main. Model details, performance and microscopy metadata load only when their screens are opened. The central `src/product/data.ts` module owns replay and selected sample state.
 
-Public URL: https://itsdooby.github.io/mmistsafe-ai/
+Fonts and their licences are bundled locally. No external resources are needed to render the interface.
 
-## Data and evidence
+## Verification
 
-`src/presentation-data.json` contains extracted values, source filenames and SHA-256 hashes. Original workbooks are copied unchanged into `public/files`. `scripts/prepare-presentation-data.py` regenerates the data from the supplied files using Python's standard library; Python is needed only to regenerate source assets, not to run the platform.
+`scripts/check_analysis.py` independently recomputes metrics, checks training/evaluation separation, verifies scores and independent stop flags, and asserts missing-image handling. `verify-product.cjs` exercises all seven routes, desktop/mobile and Arabic/English, sidebar collapse, filters/sorting, CSV, drawers, local alert logs, settings and replay. The browser helper uses this development laptop's Edge/Playwright paths. Set `PREVIEW_URL` to test a deployed build.
 
-Fonts are bundled with their open licences in `public/fonts`, so the interface has no runtime dependency on a font CDN. Research links open external sources only when a visitor selects them.
-
-See `PRESENTATION_STATUS.md` for the current implementation and verification scope. `verify-presentation.cjs` exercises the main browser workflows on the development preview; its Edge/Playwright paths are specific to the development laptop.
-
-## Earlier prototype
-
-The earlier Express/Python/SQLite implementation remains in the repository for historical reference and is not included in the browser entry point. Its optional command is `npm run legacy:dev`. `DEVELOPMENT_STATUS.md` and `UI_REVIEW.md` describe that earlier hardware-oriented prototype, not this presentation edition.
-
-No physical valve response, biological accuracy, or water-safety performance has been validated by this presentation.
+`PRODUCT_STATUS.md` documents the changes and remaining limitations. The older status files describe previous project scopes. The presentation QR in `presentation-assets` still points to the same public site. The submitted PowerPoint and Word files have not been edited in this revision.

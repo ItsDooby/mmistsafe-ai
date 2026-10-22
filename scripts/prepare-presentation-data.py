@@ -54,5 +54,5 @@ for original, dest in [(operational,'operational-80.xlsx'), (archive,'simulated-
     shutil.copyfile(SOURCE / original, out / dest)
     manifest.append(dict(original=original, file=dest, sha256=hashlib.sha256((SOURCE / original).read_bytes()).hexdigest()))
 data = dict(samples=records, images=images, sources=sources, archiveCount=len(archive_rows), archiveClasses=dict(collections.Counter(r['B'] for r in archive_rows)), files=manifest)
-(ROOT / 'src' / 'presentation-data.json').write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
+(ROOT / 'legacy' / 'ui' / 'presentation-data.json').write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
 print(f'Extracted {len(records)} operational records, {len(images)} image references, {len(sources)} research sources; archive: {len(archive_rows)} records.')

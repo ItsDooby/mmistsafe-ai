@@ -1,0 +1,9 @@
+{
+  "inputs": {
+    "operational-80.xlsx": "ac10f8b51916f722dc1382a4e1b8fe6cd038c2dec8c3067e1a5b335b1f0c81cd",
+    "research-register.xlsx": "5a66efe17e3497ebe07c8a599fbfcc0c841a1106ab4f87349f8636a45c368746",
+    "simulated-400.xlsx": "d8cc892af47aecfd6bee5e08b7098dbc4df2ed905aa3eb9c1d5dd3416a38b62f"
+  },
+  "labels": "Research-generated; not verified laboratory outcomes",
+  "method": "Train-only standardization; fixed existing hold-out; no image model"
+}

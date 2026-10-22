@@ -1,4 +1,4 @@
-name: Publish MistSafe presentation
+name: Publish MistSafe
 on:
   push:
     branches: [main]
@@ -13,6 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/build_data.py
+      - run: python scripts/check_analysis.py
       - uses: pnpm/action-setup@v4
         with:
           version: 10
